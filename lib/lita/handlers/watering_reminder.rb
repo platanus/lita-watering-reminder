@@ -14,8 +14,13 @@ module Lita
         response.reply("perfecto, entonces #{response.matches[0][2]} regará cada #{response.matches[0][0]} en la #{response.matches[0][1]}")
       end
 
-      route(/quié?e?nes riegan?/i) do |response|
-        response.reply("veamos, los que tienen dia para regar son estos: #{waterers_list.join(', ')}")
+      route(/quié?e?nes riegan\?$/i) do |response|
+        message = "Veamos:"
+        waterers_list.each do |waterer|
+          waterer = JSON.parse(waterer)
+          message += "\n#{waterer['mention_name']} riega los #{waterer['day']} en la #{waterer['moment']}"
+        end
+        response.reply(message)
       end
 
       route(/([^\s]+) ya no quiere regar más/i) do |response|
@@ -23,20 +28,24 @@ module Lita
         response.reply("ok!")
       end
 
+      route(/voy a regar los ([^\s]+) en la ([^\s]+)/) do |response|
+        add_to_waterers(response.user.mention_name, response.matches[0][0], response.matches[0][1])
+        response.reply("Perfecto @#{response.user.mention_name}, te recordaré regar cada #{response.matches[0][0]} en la #{response.matches[0][1]}.")
+      end
+      
       route(/refresh/) do |response|
         refresh
       end
 
       def refresh
         days = [:lunes, :martes, :miercoles, :jueves, :viernes, :sabado, :domingo]
-        today = days[Date.today.wday - 1]
+        today = days[Time.now.wday - 1]
         now = Time.now.hour < 14 ? 'mañana' : 'tarde'
         waterers_list.each do |waterer|
           waterer = JSON.parse(waterer)
           if waterer['day'] == today.to_s && waterer['moment'] == now
-            user = Lita::User.find_by_mention_name(waterer['mention_name'])
-            message = "Acuérdate de regar hoy"
-            robot.send_message(Source.new(user: user), message)
+            message = "@#{waterer['mention_name']} acuérdate que hoy día en la #{now} te toca regar."
+            robot.send_message(Source.new(room: "#coffeebar"), message)
           end
         end
       end

@@ -1,13 +1,13 @@
-# lita-lunch-reminder
+# lita-watering-reminder
 
 TODO: Add a description of the plugin.
 
 ## Installation
 
-Add lita-lunch-reminder to your Lita instance's Gemfile:
+Add lita-watering-reminder to your Lita instance's Gemfile:
 
 ``` ruby
-gem "lita-lunch-reminder"
+gem "lita-watering-reminder"
 ```
 
 ## Configuration
