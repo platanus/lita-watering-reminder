@@ -6,7 +6,7 @@ module Lita
     class WateringReminder < Handler
       on :loaded, :load_on_start
 
-      def self.help_msg(routes)
+      def self.help_msg(route)
         { "watering-reminder: #{t("help.#{route}.usage")}" => t("help.#{route}.description") }
       end
 
