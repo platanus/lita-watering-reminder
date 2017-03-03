@@ -5,16 +5,21 @@ module Lita
   module Handlers
     class WateringReminder < Handler
       on :loaded, :load_on_start
+
+      def self.help_msg(routes)
+        { "watering-reminder: #{t("help.#{route}.usage")}" => t("help.#{route}.description") }
+      end
+
       def load_on_start(_payload)
         create_schedule
       end
 
-      route(/el que riega los ([^\s]+) en la ([^\s]+) es ([^\s]+)/i) do |response|
+      route(/el que riega los ([^\s]+) en la ([^\s]+) es ([^\s]+)/i, help: help_msg(:add_to_waterers)) do |response|
         add_to_waterers(response.matches[0][2], response.matches[0][0], response.matches[0][1])
         response.reply("perfecto, entonces #{response.matches[0][2]} regará cada #{response.matches[0][0]} en la #{response.matches[0][1]}")
       end
 
-      route(/quié?e?nes riegan\?$/i) do |response|
+      route(/quié?e?nes riegan\?$/i, help: help_msg(:waterers_list)) do |response|
         message = "Veamos:"
         waterers_list.each do |waterer|
           waterer = JSON.parse(waterer)
@@ -23,17 +28,17 @@ module Lita
         response.reply(message)
       end
 
-      route(/([^\s]+) ya no quiere regar más/i) do |response|
+      route(/([^\s]+) ya no quiere regar más/i, help: help_msg(:remove_from_waterers)) do |response|
         remove_from_waterers(response.matches[0][0])
         response.reply("ok!")
       end
 
-      route(/voy a regar los ([^\s]+) en la ([^\s]+)/) do |response|
+      route(/voy a regar los ([^\s]+) en la ([^\s]+)/, help: help_msg(:add_me_to_waterers)) do |response|
         add_to_waterers(response.user.mention_name, response.matches[0][0], response.matches[0][1])
         response.reply("Perfecto @#{response.user.mention_name}, te recordaré regar cada #{response.matches[0][0]} en la #{response.matches[0][1]}.")
       end
       
-      route(/refresh/) do |response|
+      route(/refresh/, help: help_msg(:refresh)) do |response|
         refresh
       end
 
