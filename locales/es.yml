@@ -10,7 +10,7 @@ es:
             usage: quienes riegan?
             description: Muestra la lista de los encargados de regar y qué dia les toca
           remove_from_waterers:
-            usage: "[usuario] ya no quiere regar mas"
+            usage: "[usuario] ya no quiere regar más"
             description: Elimina al usuario de sus responsabilidades con el riego
           add_me_to_waterers:
             usage: "voy a regar los [dia] en la [mañana|tarde]"
